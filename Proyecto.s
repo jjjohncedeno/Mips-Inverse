@@ -1,9 +1,9 @@
 
 
 .data
-        linea1:   .asciiz   "La palabra real es: "
-        msg:      .asciiz   "HolaSoyJohn"
-        linea2:   .asciiz   "\nLa palabra final: "
+        #linea1:   .asciiz   "La palabra real es: "
+        msg:      .asciiz   "Hola"
+        #linea2:   .asciiz   "\nLa palabra final: "
         msgNuevo: .space    100
         .extern   foobar    4
 
@@ -11,27 +11,13 @@
         .globl main
 
 main:
-        la        $a0, linea1
-        li        $v0, 4
-        syscall
-
-        la        $a0, msg
-        syscall
-
-        la        $a0, linea2
-        syscall
-
-        la        $a0, msg
-        jal       cambia
 
         la        $a0, msg
         la        $a1, msgNuevo
         jal       invierte
 
-        la        $a0, msg
-        syscall
         la        $a0, msgNuevo
-        syscall
+        jal       cambia
 
         li        $v0, 10
         syscall
@@ -45,16 +31,16 @@ cambia:
              beqz     $t0, fin
              slt      $t2, $t0, 91
              #slt      $t3, 97, $t0
-             beq      $t2, 1, tomayuscula
-             beq      $t2, 0, tominuscula
+             beq      $t2, 1, tominuscula
+             beq      $t2, 0, tomayuscula
 
-        tomayuscula:
+        tominuscula:
              add      $t4, $t0, 32
              sb       $t4, ($a0)
              addi     $a0, $a0, 1
              j bucle1
 
-        tominuscula:
+        tomayuscula:
              sub      $t4, $t0, 32
              sb       $t4, ($a0)
              addi     $a0, $a0, 1
@@ -70,6 +56,8 @@ invierte:
              beqz     $t0, desapila
              addi     $sp, $sp, -1
              sb       $t0, ($sp)
+             sb       $t0, ($a1)
+             addi     $a1, $a1, 1
              addi     $t1, $t1, 1
              addi     $a0, $a0, 1
              j bucle
@@ -81,4 +69,5 @@ invierte:
              addi     $t1, $t1, -1
              bnez     $t1, desapila
        sb $zero, ($a1)
+
        jr $ra
